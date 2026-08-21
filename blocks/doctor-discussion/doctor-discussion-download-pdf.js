@@ -1,6 +1,10 @@
+import { buildLegacyAnswersPayload } from './doctor-discussion-utils.js';
+
 /**
  * @param {Object} config - Configuration object.
  * @param {string} config.apiUrl - API endpoint used to generate the PDF.
+ * @param {string} [config.username] - Basic Auth username for apiUrl, if required.
+ * @param {string} [config.password] - Basic Auth password for apiUrl, if required.
  * @param {HTMLButtonElement} [config.button] - Download button (optional).
  *                                             Used to show loading state and disable multiple clicks.
  * @param {string} [config.errorElementId='pdf-error-msg'] - ID of the generic error message container.
@@ -8,11 +12,13 @@
  *                 when the browser blocks the auto-opened tab. Must contain an <a> element (or be one)
  *                 that the controller can point at the generated PDF for the user to click manually.
  *
- * @returns {{ download: (quizData: unknown) => Promise<void> }}
+ * @returns {{ download: (quizData: Object, steps: Array, nameFieldName: string|null) => Promise<void> }}
  *          Returns an object exposing the download() function.
  */
 export default function createPdfDownloadController({
   apiUrl,
+  username,
+  password,
   button,
   errorElementId = 'pdf-error-msg',
   popupBlockedElementId = 'dg-pdf-popup-blocked',
@@ -24,6 +30,20 @@ export default function createPdfDownloadController({
   // Stores the previously created object URL.
 
   let lastObjectUrl = null;
+
+  /**
+   * Builds the request headers, adding a Basic Auth Authorization header
+   * when username/password were supplied.
+   * @returns {Object}
+   */
+  function buildHeaders() {
+    const headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+    if (username && password) {
+      const credentials = `${username}:${password}`;
+      headers.Authorization = `Basic ${btoa(credentials)}`;
+    }
+    return headers;
+  }
 
   /**
    * Shows or hides the PDF download error message.
@@ -78,9 +98,12 @@ export default function createPdfDownloadController({
 
   /**
    * Generates and downloads the PDF.
-   * @param {Object} quizData - Quiz/form data sent to the PDF API.
+   * @param {Object} quizData - Quiz/form data (the shared answers store) sent to the PDF API.
+   * @param {Array} [steps] - Step/field definitions, needed to derive option indices for the
+   *                          legacy qNaM encoding. Falls back to no q/a params if omitted.
+   * @param {string|null} [nameFieldName] - Field name of the "My name is" text input, if any.
    */
-  async function download(quizData) {
+  async function download(quizData, steps = [], nameFieldName = null) {
     // Ignore repeated clicks while a request is already running.
     if (isLoading) return;
 
@@ -98,13 +121,15 @@ export default function createPdfDownloadController({
     const popupWasBlocked = !pdfWindow;
 
     try {
+      // Build the legacy form-encoded payload the PDF API expects, using
+      // the shared builder also used by the Email API (see doctor-discussion-utils.js).
+      const formPayload = new URLSearchParams(buildLegacyAnswersPayload(quizData, steps, nameFieldName));
+
       // Send quiz data to the PDF generation API.
       const response = await fetch(apiUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(quizData),
+        headers: buildHeaders(),
+        body: formPayload.toString(),
       });
 
       // Ensure the server returned a successful response.

@@ -426,8 +426,6 @@ main .section div.doctor-discussion-wrapper {
 
 /* Doctor Discussion — Results screen styles */
 
-/* ---------- Results header (no badge, no progress bar) ---------- */
-
 .dg-results-header-wrapper {
   border-radius: 12px 12px 0 0;
   overflow: hidden;
@@ -437,6 +435,7 @@ main .section div.doctor-discussion-wrapper {
   background: var(--brand-teal);
   justify-content: center;
   padding: 16px 0;
+  min-height: auto;
 }
 
 .dg-results-header .dg-results-header-title {
@@ -903,6 +902,10 @@ body.modal-open {
 
 /* ---------- Thank You modal ---------- */
 
+#dg-thankyou-modal {
+  align-items: center;
+}
+
 .dg-thankyou-content {
   align-items: center;
   display: flex;
@@ -915,55 +918,46 @@ body.modal-open {
   display: block;
 }
 
-.dg-thankyou-content p {
-  display: block;
-  color: var(--text-color);
-  margin: 0;
-  font: 22px/22px var(--body-font-family);
-}
 
 .dg-thankyou-icon {
-    height: 84px;
-    object-fit: contain;
-    width: 84px;
+  height: auto;
+  object-fit: contain;
+  width: 145px;
 }
 
-.dg-thankyou-title {
-    color: var(--brand-teal);
-    font: 700 28px var(--body-font-family);
-    margin-top: 24px;
+.dg-thankyou-heading {
+  color: var(--brand-teal);
+  margin-top: 14px;
+  font: 700 22px/22px var(--body-font-family);
 }
 
 #thank-you {
   font: 700 22px var(--body-font-family);
-  margin-top: 16px;
   margin-bottom: 8px;
   color: var(--brand-teal);
 }
 
-.dg-thankyou-description {
-    color: var(--text-color);
-    font: 16px/1.5 var(--body-font-family);
-    margin-top: 12px;
+.dg-thankyou-message {
+  color: var(--text-color);
+  font: 400 22px/22px var(--body-font-family);
+  margin: 0;
 }
 
-.dg-thankyou-close {
-    position: absolute;
-    top: 24px;
-    right: 24px;
-}
-
-.dg-thankyou-close  .dg-thankyou-close-btn {
+.dg-thankyou-close-btn {
   position: absolute;
   top: 11px;
   right: 11px;
   width: 32px;
   height: 32px;
-  border: none;
   background: transparent;
   cursor: pointer;
-  border-radius: 6px;
+  border:0;
   padding: 0;
+}
+
+.dg-thankyou-close-btn:focus,
+.dg-thankyou-close-btn:hover {
+  background: transparent;
 }
 
 
@@ -973,13 +967,6 @@ body.modal-open {
   color: var(--text-color);
 }
 
-.dg-modal-success-icon {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 1px solid var(--color-border);
-  margin-bottom: 20px;
-}
 
 .dg-modal-success-heading {
   color: var(--color-brand);

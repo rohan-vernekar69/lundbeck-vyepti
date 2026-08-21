@@ -1,4 +1,7 @@
 import { lockBodyScroll, unlockBodyScroll } from './doctor-discussion-modal-utils.js';
+import {
+  EMAIL_FORM_TYPE, EMAIL_JOBCODE, PDF_DOWNLOAD_API_USERNAME, PDF_DOWNLOAD_API_PASSWORD,
+} from './doctor-discussion-utils.js';
 
 /**
  * Returns the right error message (empty vs. invalid) using the
@@ -20,7 +23,9 @@ function getFieldErrorMessage(input, errorEl) {
  * @param {Object} config
  * @param {string} config.modalId - Modal element ID (e.g., 'mq-modal')
  * @param {string} config.formId - Form element ID (e.g., 'emailForm')
- * @param {Object} config.quizData - Quiz payload object to merge with form input
+ * @param {Object} config.quizData - Flattened legacy answers payload (e.g. { fname, q1a1, ... }),
+ *                                   already built via buildLegacyAnswersPayload() — see
+ *                                   getOrCreateEmailModal() in doctor-discussion-interactions.js.
  * @returns {{ open: Function, close: Function, handleSubmit: Function }}
  */
 export default function createEmailModalController({ modalId = "mq-modal", formId = "emailForm", quizData = {} } = {}) {
@@ -181,7 +186,9 @@ export default function createEmailModalController({ modalId = "mq-modal", formI
   }
 
   /**
-   * Validates inputs and posts combined quiz payload + user data to API.
+   * Validates inputs and posts the combined quiz payload + user data to the
+   * sendemail API as form-urlencoded data (confirmed via live network
+   * capture — the API does not accept JSON).
    *
    * @param {Event} event
    */
@@ -195,33 +202,41 @@ export default function createEmailModalController({ modalId = "mq-modal", formI
 
     if (!isValid) return;
 
-    // Build payload
-    const payload = {
-      ...quizData,
+    // Build the form-urlencoded payload matching the sendemail API
+    const payload = new URLSearchParams({
+      FormType: EMAIL_FORM_TYPE,
+      Jobcode: EMAIL_JOBCODE,
       FirstName: firstNameInput.value,
       LastName: lastNameInput.value,
       Email: emailInput.value,
-      Consented: consentInput.checked,
-      FormType: "mq",
-    };
+      ConsentCheckBox: consentInput.checked,
+      ...quizData,
+    });
 
-    // Close the email modal and hand off to the Thank You modal. 
+    // Close the email modal and hand off to the Thank You modal.
     function handleSuccess() {
       if (errorMsg) errorMsg.classList.add("d-none");
       close();
       document.dispatchEvent(new CustomEvent("dg:email-success", {
         bubbles: true,
-        detail: { quizData: payload },
+        detail: { quizData: Object.fromEntries(payload) },
       }));
     }
 
     const submitUrl = form.getAttribute("data-submit");
 
+    // Stage proxy requires the same Basic Auth as the PDF endpoint
+    const headers = { "Content-Type": "application/x-www-form-urlencoded" };
+    if (PDF_DOWNLOAD_API_USERNAME && PDF_DOWNLOAD_API_PASSWORD) {
+      const credentials = `${PDF_DOWNLOAD_API_USERNAME}:${PDF_DOWNLOAD_API_PASSWORD}`;
+      headers.Authorization = `Basic ${btoa(credentials)}`;
+    }
+
     try {
       const response = await fetch(submitUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        headers,
+        body: payload.toString(),
       });
 
       if (!response.ok) throw new Error("API response error");
@@ -233,10 +248,10 @@ export default function createEmailModalController({ modalId = "mq-modal", formI
       } else if (errorMsg) {
         errorMsg.classList.remove("d-none");
       }
-      } catch (err) {
-        document.dispatchEvent(new CustomEvent("dg:email-error", { bubbles: true, detail: { error: err } }));
-        if (errorMsg) errorMsg.classList.remove("d-none");
-      }
+    } catch (err) {
+      document.dispatchEvent(new CustomEvent("dg:email-error", { bubbles: true, detail: { error: err } }));
+      if (errorMsg) errorMsg.classList.remove("d-none");
+    }
   }
 
   return { open, close, handleSubmit };
