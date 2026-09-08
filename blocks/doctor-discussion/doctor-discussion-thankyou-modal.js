@@ -14,17 +14,14 @@ export default function createThankYouModalController({
 } = {}) {
   const modal = document.getElementById(modalId);
 
-  // Forward-declared: close() and handleOutsideClick()/handleEscape() call
-  // each other, so close() needs these before they're assigned below.
+  // Forward-declared.
   let handleOutsideClick;
   let handleEscape;
 
   // Closes modal and unlocks scroll.
-  // Defined above handleOutsideClick since the two reference each other.
   function close() {
     if (!modal) return;
     modal.classList.remove('show');
-    modal.style.display = 'none';
 
     unlockBodyScroll();
 
@@ -33,7 +30,6 @@ export default function createThankYouModalController({
   }
 
   // Closes modal if user clicks the backdrop (the .modal wrapper itself)
-  // outside the .modal-dialog content.
   handleOutsideClick = (event) => {
     const modalDialog = modal.querySelector('.modal-dialog');
     if (modalDialog && !modalDialog.contains(event.target)) {
@@ -49,7 +45,6 @@ export default function createThankYouModalController({
   function open() {
     if (!modal) return;
     modal.classList.add('show');
-    modal.style.display = 'flex';
 
     lockBodyScroll();
 

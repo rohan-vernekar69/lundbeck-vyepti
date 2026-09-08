@@ -1,42 +1,14 @@
-// ---------------------------------------------------------------------------
-// Doctor Discussion — authorable Email Modal content
-// ---------------------------------------------------------------------------
+// Doctor Discussion — Email Modal content, parsed from the authored
+// "email-modal" sheet tab. Unauthored rows stay structurally empty rather
+// than falling back to hardcoded copy.
 
-export const DEFAULT_EMAIL_MODAL_CONFIG = {
-  title: 'Email me this information',
-  requiredNote: 'All fields are required',
-  firstNameLabel: 'First Name',
-  lastNameLabel: 'Last Name',
-  emailLabel: 'Email address',
-  consentParagraphs: [
-    'By submitting this form, I agree to receive email updates about migraine and migraine treatment with VYEPTI. '
-      + 'I authorize Lundbeck, its affiliates, its employees, and its agents to use the information I am providing in order to enroll me in the email program.',
-    'Lundbeck will not sell your provided data to any third party, at any time. By clicking "Send," you signify that you have read and agree to our '
-      + '[Terms of Use](https://www.lundbeck.com/us/terms-of-use) and [Privacy Policy](https://www.lundbeck.com/us/privacy-policy).',
-  ],
-  sendLabel: 'Send',
-  errors: {
-    firstNameEmpty: 'Please enter your first name',
-    firstNameInvalid: 'Please enter a valid first name',
-    lastNameEmpty: 'Please enter your last name',
-    lastNameInvalid: 'Please enter a valid last name',
-    emailEmpty: 'Please enter your email address',
-    emailInvalid: 'Please enter a valid email address',
-    consent: 'Please check the box',
-    generic: 'Something went wrong. Please try again.',
-  },
-};
-
-// Name -> setter writing that row's Label onto a known config field
-// (heading/plaintext rows, identified by Name only). Whitelists writes to
-// literal properties instead of config[dynamicKey].
+// Name -> setter writing that row's Label onto a known config field.
 const SIMPLE_FIELD_SETTERS = new Map([
   ['modal-title', (config, label) => { config.title = label; }],
   ['required-note', (config, label) => { config.requiredNote = label; }],
 ]);
 
-// Name -> setter writing Label ("empty" message) and, if present,
-// Placeholder ("invalid" message) onto config.errors. Some rows ignore Placeholder.
+// Name -> setter writing Label (empty msg) + Placeholder (invalid msg) onto config.errors.
 const ERROR_FIELD_SETTERS = new Map([
   ['firstname-error', (errors, label, placeholder) => {
     errors.firstNameEmpty = label;
@@ -54,26 +26,39 @@ const ERROR_FIELD_SETTERS = new Map([
   ['generic-error', (errors, label) => { errors.generic = label; }],
 ]);
 
-// Name (lowercased) -> setter that writes that row's Label onto the right
-// real field's on-screen Label, for 'text' rows.
+// Name -> setter writing that row's Label onto the matching field's on-screen Label.
 const FIELD_LABEL_SETTERS = new Map([
   ['firstname', (config, label) => { config.firstNameLabel = label; }],
   ['lastname', (config, label) => { config.lastNameLabel = label; }],
   ['email', (config, label) => { config.emailLabel = label; }],
 ]);
 
-/**
- * Parses "email-modal" rows into a config object, falling back field-by-
- * field to defaults. Unrecognized rows are silently ignored, not errored.
- *
- * @param {Array<Object>} rows - raw sheet rows (Type/Name/Label/Placeholder columns).
- * @returns {Object} config in the same shape as DEFAULT_EMAIL_MODAL_CONFIG
- */
-export function parseEmailModalRows(rows) {
-  const config = {
-    ...DEFAULT_EMAIL_MODAL_CONFIG,
-    errors: { ...DEFAULT_EMAIL_MODAL_CONFIG.errors },
+// Structural default config — every field present, all unauthored.
+function createEmptyEmailModalConfig() {
+  return {
+    title: '',
+    requiredNote: '',
+    firstNameLabel: '',
+    lastNameLabel: '',
+    emailLabel: '',
+    consentParagraphs: [],
+    sendLabel: '',
+    errors: {
+      firstNameEmpty: '',
+      firstNameInvalid: '',
+      lastNameEmpty: '',
+      lastNameInvalid: '',
+      emailEmpty: '',
+      emailInvalid: '',
+      consent: '',
+      generic: '',
+    },
   };
+}
+
+// Parses "email-modal" rows into a config object; unrecognized rows are ignored.
+export default function parseEmailModalRows(rows) {
+  const config = createEmptyEmailModalConfig();
   const consentParagraphs = [];
 
   (rows || []).forEach((row) => {
@@ -113,9 +98,7 @@ export function parseEmailModalRows(rows) {
     }
   });
 
-  config.consentParagraphs = consentParagraphs.length
-    ? consentParagraphs
-    : DEFAULT_EMAIL_MODAL_CONFIG.consentParagraphs;
+  config.consentParagraphs = consentParagraphs;
 
   return config;
 }

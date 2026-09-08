@@ -27,7 +27,7 @@ main .section div.doctor-discussion-wrapper {
   max-width: 1110px;
 }
 
-/* ---------- Doctor Discussion Card ---------- */
+/* Doctor Discussion Card */
 
 .dg-card {
   background: var(--background-color);
@@ -37,7 +37,15 @@ main .section div.doctor-discussion-wrapper {
   width: 100%;
 }
 
-/* ---------- Header (step banner + progress bar) ---------- */
+.dg-step {
+  display: none;
+}
+
+.dg-step.is-active {
+  display: block;
+}
+
+/* Header (step banner + progress bar) */
 
 .dg-header-wrapper {
   display: flex;
@@ -96,7 +104,7 @@ main .section div.doctor-discussion-wrapper {
   background: var(--doctor-discussion-step-progress-active);
 }
 
-/* ---------- Form layout ---------- */
+/* Form layout */
 
 .dg-form {
   box-sizing: border-box;
@@ -160,7 +168,7 @@ main .section div.doctor-discussion-wrapper {
   border-color: var(--dg-navy);
 }
 
-/* ---------- Options (checkbox + radio share the same look) ---------- */
+/* Options (checkbox + radio share the same look) */
 
 .dg-option-list {
   display: flex;
@@ -192,30 +200,6 @@ main .section div.doctor-discussion-wrapper {
   width: 25px;
 }
 
-.dg-step1-icon1 {
-  background-image: url('/icons/ddg-social-events-23-desktop.svg');
-}
-
-.dg-step1-icon2 {
-  background-image: url('/icons/ddg-work-school-21-desktop.svg');
-}
-
-.dg-step1-icon3 {
-  background-image: url('/icons/ddg-daily-life-22-desktop.svg');
-}
-
-.dg-step1-icon4 {
-  background-image: url('/icons/ddg-exercise-20-desktop.svg');
-}
-
-.dg-step1-icon5 {
-  background-image: url('/icons/ddg-plans-20-desktop.svg');
-}
-
-.dg-step1-icon6 {
-  background-image: url('/icons/ddg-none-23-desktop.svg');
-}
-
 .dg-option-text {
   color: var(--brand-grey-dark);
   flex: 1;
@@ -234,7 +218,7 @@ main .section div.doctor-discussion-wrapper {
   align-items: center;
   background: transparent;
   border: 1px solid rgb(126 188 198 / 50%);
-  border-radius: 4px; /* checkbox = rounded square */
+  border-radius: 4px; 
   box-sizing: border-box;
   display: flex;
   cursor:pointer;
@@ -246,6 +230,7 @@ main .section div.doctor-discussion-wrapper {
 }
 
 /* Radios, and the exclusive "None of the above" checkbox, are circular */
+
 .dg-option-input[type='radio'] + .dg-option-control,
 .dg-option-input[data-exclusive='true'] + .dg-option-control {
   border-radius: 50%;
@@ -254,6 +239,7 @@ main .section div.doctor-discussion-wrapper {
 }
 
 /* Checkbox checked state: control fills solid with a white checkmark */
+
 .dg-option-input:checked + .dg-option-control {
   background: var(--brand-teal);
   border-color: var(--brand-teal);
@@ -300,7 +286,7 @@ main .section div.doctor-discussion-wrapper {
   width: 17px;
 }
 
-/* ---------- Actions (Back / Next / Finish) ---------- */
+/* Actions (Back / Next / Finish) */
 
 .dg-actions {
   align-items: center;
@@ -349,21 +335,6 @@ main .section div.doctor-discussion-wrapper {
   opacity: 0.5;
 }
 
-/*
- * Back/Next/Finish arrow icons.
- *
- * Same span-vs-img scoping as the Download/Email/Retake icons below (see
- * that comment block for the full rationale) — the background-image rules
- * are scoped to `span` only, the CSS-driven fallback rendered by
- * buildActionIcon() in doctor-discussion-form-wizard.js when no icon has
- * been authored. When an icon IS authored (via the button row's
- * Placeholder column, or a "[icon](url)" tag in its Label), that same
- * function renders a real <img class="dg-next-arrow">/<img
- * class="dg-back-arrow"> instead. If these rules applied to the class name
- * generally (not scoped to `span`), the authored <img>'s own src would be
- * squashed by this fixed-size background-image rule instead of sizing
- * naturally via object-fit.
- */
 .dg-next-arrow,
 .dg-back-arrow {
   flex-shrink: 0;
@@ -371,22 +342,11 @@ main .section div.doctor-discussion-wrapper {
   width: 21px;
 }
 
-span.dg-next-arrow {
-  background: url('/icons/cta-button-arrow-20-global-white.svg');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-}
-
 span.dg-back-arrow {
-  background: url('/icons/cta-button-arrow-20-global-blue.svg');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
   transform: rotate(180deg);
 }
 
-/* Authored icon <img> — same box as the span above, no background painted. */
+
 img.dg-next-arrow,
 img.dg-back-arrow {
   object-fit: contain;
@@ -415,7 +375,7 @@ img.dg-back-arrow {
   opacity: 0.5;
 }
 
-/* ---------- DID YOU KNOW? callout ---------- */
+/* DID YOU KNOW? callout */
 
 .dg-callout {
   align-items: flex-start;
@@ -435,8 +395,7 @@ img.dg-back-arrow {
 }
 
 .dg-callout-icon {
-  background-image: url('/icons/ddg-flag-17-desktop.svg');
-  background-repeat: no-repeat;
+  background: url('/icons/ddg-flag-17-desktop.svg') no-repeat;
   flex-shrink: 0;
   height: 22px;
   margin-top: 3px;
@@ -474,7 +433,7 @@ img.dg-back-arrow {
   margin: 0;
 }
 
-/* ---------- Body wrapper ---------- */
+/* Body wrapper */
 
 .dg-results-card {
   padding-bottom: 4px;
@@ -493,7 +452,7 @@ img.dg-back-arrow {
   text-align: center;
 }
 
-/* ---------- Numbered question / answer list ---------- */
+/* Numbered question / answer list */
 
 .dg-results-list {
   counter-reset: dg-results-counter;
@@ -539,7 +498,7 @@ img.dg-back-arrow {
   font-weight: 700;
 }
 
-/* ---------- Download / Email ---------- */
+/* Download / Email */
 
 .dg-results-download-label {
   color: var(--text-color);
@@ -584,47 +543,12 @@ img.dg-back-arrow {
   border-color: var(--brand-teal);
 }
 
-/*
- * Download/Email button icons.
- *
- * IMPORTANT: the background-image rules below are scoped to `span` only
- * — the CSS-driven fallback element built by buildButtonIcon() in
- * doctor-discussion-results-builders.js when no icon has been authored.
- * When an icon IS authored (see the "Download Button Icon"/"Email Button
- * Icon" config rows in doctor-discussion-sheet.js), that same function
- * renders a real <img class="dg-download-icon">/<img class="dg-email-icon">
- * instead. If these rules applied to the class name generally (not scoped
- * to `span`), the authored <img>'s own src AND this background-image
- * would both paint on the same element — the bug seen when an icon was
- * authored and the old icon showed doubled-up behind the new one. Sizing
- * stays shared between both cases; only the *fallback* icon-drawing rule
- * is span-scoped.
- */
 .dg-download-icon,
 .dg-email-icon {
   flex-shrink: 0;
   height: 19px;
-  width: 18px;
-}
-
-span.dg-download-icon {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-image: url('/icons/download-white-20-desktop.svg');
-}
-
-span.dg-email-icon {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-image: url('/icons/ddg-mail-white-20-mobile.svg');
-}
-
-/* Authored icon <img> — same box as the span above, no background painted. */
-img.dg-download-icon,
-img.dg-email-icon {
   object-fit: contain;
+  width: 18px;
 }
 
 .dg-results-note {
@@ -635,7 +559,7 @@ img.dg-email-icon {
   text-align:center;
 }
 
-/* ---------- Dividers ---------- */
+/* Dividers */
 
 .dg-results-divider {
   background: var(--result-divider-bg);
@@ -644,7 +568,7 @@ img.dg-email-icon {
   margin: 0;
 }
 
-/* ---------- CTA heading + Retake ---------- */
+/*  CTA heading + Retake */
 
 .dg-results-cta-heading {
   color: var(--text-color);
@@ -674,27 +598,11 @@ img.dg-email-icon {
   text-decoration: none;
 }
 
-/*
- * Retake button icon. Same span-vs-img scoping as the Download/Email
- * icons above — see that comment block for why. buildRetakeIcon() in
- * doctor-discussion-results-builders.js renders the same fallback
- * <span>/authored <img> shape.
- */
 .dg-retake-icon {
   flex-shrink: 0;
   height: 16px;
-  width: 21px;
-}
-
-span.dg-retake-icon {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-image: url('/icons/icon-retake-21-mobile.svg');
-}
-
-img.dg-retake-icon {
   object-fit: contain;
+  width: 21px;
 }
 
 .dg-results-retake-btn:hover .dg-retake-icon,
@@ -702,7 +610,7 @@ img.dg-retake-icon {
   opacity: .5;
 }
 
-/* ---------- Closing tips callout ---------- */
+/* Closing tips callout */
 
 .dg-results-tips {
   padding-top: 15px;
@@ -782,6 +690,7 @@ body {
 html.modal-open,
 body.modal-open {
   height: 100%;
+  overflow: hidden;
 }
 
 .modal-dialog {
@@ -885,6 +794,7 @@ body.modal-open {
 }
 
 /* Consent checkbox row */
+
 .dg-modal-consent-row {
   display: flex;
   align-items: flex-start;
@@ -968,7 +878,7 @@ body.modal-open {
   margin-top: 12px;
 }
 
-/* ---------- Thank You modal ---------- */
+/* Thank You modal */
 
 #dg-thankyou-modal {
   align-items: center;
@@ -1048,10 +958,11 @@ body.modal-open {
 }
 
 
-/* ==== Tablet and Desktop CSS ==== */
+/* Tablet and Desktop CSS */
 
 @media (width >= 768px) {
-/* -- Result screen -- */
+/* Result screen */
+
   main .section div.doctor-discussion-wrapper {
     padding: 24px 0;
   }
@@ -1105,7 +1016,7 @@ body.modal-open {
     left: -22px;
   }
 
-  /* === 9 Step Responsive CSS*=== */
+  /* 9 Step Responsive CSS */
 
   .dg-field-step4,
   .dg-field-step5,
@@ -1139,7 +1050,8 @@ body.modal-open {
     width: 26px;
   }
   
-  /* ---Email Modal--- */
+  /* Email Modal */
+
   .modal-content {
     padding: 24px 84px 40px;
   }
@@ -1152,7 +1064,8 @@ body.modal-open {
     padding: 0;
   }
 
-  /* ---Doctor Thankyou--- */
+  /* Doctor Thankyou */
+
   .dg-thankyou-content { 
     padding: 40px 84px;
   }
